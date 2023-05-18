@@ -800,8 +800,11 @@ class SpectrogramPage extends Component {
             </div>
           </div>
         </div>
-        <InfoViewer {...meta?.global}/>
+
         <div className="mt-3 mb-0 ml-0 mr-0 p-0" style={{ margin: '5px' }}>
+          <Collapsible title="Global" style={{ marginTop: '5px', width: '100%' }}>
+            <InfoViewer {...meta?.global} />
+          </Collapsible>
           <Collapsible title="Annotations" style={{ marginTop: '5px', width: '100%' }}>
             <Table columns={columns} data={this.calculateData(this.state.meta)} />
           </Collapsible>
