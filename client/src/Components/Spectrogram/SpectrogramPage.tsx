@@ -589,6 +589,7 @@ export const SpectrogramPage = () => {
           </details>
         </div>
       </div>
+      
       <img ref={imgRef} />
       <img ref={imgRef2} />
     </SpectrogramContext.Provider>
