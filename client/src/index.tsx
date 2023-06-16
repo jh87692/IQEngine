@@ -25,7 +25,7 @@ import Validator from './Components/Validator/Validator';
 import { App } from './App';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import RepoBrowser from './Components/RepoBrowser/RepoBrowser';
+import { RepoBrowser } from '@/Components/RepoBrowser/RepoBrowser';
 import RecordingsBrowser from './Components/RecordingsBrowser/RecordingsBrowser';
 import SpectrogramPage from './Components/Spectrogram/SpectrogramPage';
 import { CLIENT_TYPE_BLOB } from './api/Models';

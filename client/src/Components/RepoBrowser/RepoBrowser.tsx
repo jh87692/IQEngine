@@ -18,7 +18,7 @@ import { CLIENT_TYPE_BLOB, DataSource } from '@/api/Models';
 import { useQueryClient } from '@tanstack/react-query';
 import Feature from '../Feature/Feature';
 
-const RepoBrowser = () => {
+export const RepoBrowser = () => {
   let [dataAvailable, setDataAvailable] = useState(false);
   const config = configQuery();
   const blobDataSources = getDataSources(CLIENT_TYPE_BLOB, dataAvailable);
@@ -56,15 +56,20 @@ const RepoBrowser = () => {
   }, [blobDataSources.data]);
 
   return (
-    <div className="home-page">
-      {blobDataSources.data?.map((item, i) => (
-        <RepositoryTile key={i} item={item} />
-      ))}
-      <LocalFileBrowser />
-      <AzureBlobBrowser />
-      <SiggenTile />
-      <ValidatorTile />
-    </div>
+    <div class="py-10">
+			<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="grid grid-cols-3 gap-4">
+          {blobDataSources.data?.map((item, i) => (
+            <RepositoryTile key={i} item={item} />
+          ))}
+          <LocalFileBrowser />
+          <AzureBlobBrowser />
+          <SiggenTile />
+          <ValidatorTile />
+          
+        </div>
+			</div>
+		</div>
   );
 };
 
