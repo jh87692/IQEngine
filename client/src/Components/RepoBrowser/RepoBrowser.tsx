@@ -57,8 +57,8 @@ export const RepoBrowser = () => {
 
   return (
     <div class="py-10">
-			<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="grid grid-cols-3 gap-4">
+      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="grid grid-cols-3 gap-10">
           {blobDataSources.data?.map((item, i) => (
             <RepositoryTile key={i} item={item} />
           ))}
@@ -66,10 +66,9 @@ export const RepoBrowser = () => {
           <AzureBlobBrowser />
           <SiggenTile />
           <ValidatorTile />
-          
         </div>
-			</div>
-		</div>
+      </div>
+    </div>
   );
 };
 

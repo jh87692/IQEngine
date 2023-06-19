@@ -61,7 +61,7 @@ const LocalFileBrowser = () => {
     <div class="card w-96 bg-neutral text-neutral-content shadow-xl mb-3">
       <figure><img class="object-cover h-48 w-96" src="/local_file.jpeg" alt="Shoes" /></figure>
         <div class="card-body">
-          <h2 className="card-title">Local File Browser</h2>
+          <h2 className="card-title text-2xl">Local File Browser</h2>
           <p>Choose from opening a local directory OR from a local SigMF metadata & raw IQ file</p>
           <span className="label-text-alt">Note: FFTs and visualizations are performed client-side </span>
           <div className="card-actions mt-2 justify-end">
