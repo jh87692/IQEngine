@@ -1,19 +1,22 @@
 # vim: tabstop=4 shiftwidth=4 expandtab
 import os
+
 from database.models import Metadata
 from tests.test_data import test_datasource, valid_metadata
 
 
 def test_api_get_config(client):
-    os.environ["PLUGINS_ENDPOINT"] = "http://localhost:5000"
-    os.environ["CONNECTION_INFO"] = "{}"
-    os.environ["GOOGLE_ANALYTICS_KEY"] = "google_analytics_key"
+    os.environ["IQENGINE_PLUGINS_ENDPOINT"] = "http://localhost:5000"
+    os.environ["IQENGINE_CONNECTION_INFO"] = "{}"
+    os.environ["IQENGINE_GOOGLE_ANALYTICS_KEY"] = "google_analytics_key"
+    os.environ["IQENGINE_FEATURE_FLAGS"] = "{}"
     response = client.get("/api/config")
     assert response.status_code == 200
     assert response.json() == {
         "pluginsEndpoint": "http://localhost:5000/",  # it should add the trailing "/"
         "connectionInfo": {},
         "googleAnalyticsKey": "google_analytics_key",
+        "featureFlags": {},
     }
 
 
@@ -151,6 +154,19 @@ def test_api_get_all_meta(client):
 def test_api_create_datasource(client):
     response = client.post("/api/datasources", json=test_datasource)
     assert response.status_code == 201
+
+
+def test_api_put_datasource(client):
+    local_test_datasource = test_datasource.copy()
+    response = client.post("/api/datasources", json=local_test_datasource)
+    local_test_datasource["description"] = "new description"
+    local_test_datasource["sasToken"] = "new sasToken"
+    response = client.put(
+        f'/api/datasources/{local_test_datasource["account"]}'
+        f'/{local_test_datasource["container"]}/datasource',
+        json=local_test_datasource,
+    )
+    assert response.status_code == 204
 
 
 def test_api_get_datasources(client):

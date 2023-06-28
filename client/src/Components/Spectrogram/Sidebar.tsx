@@ -13,8 +13,6 @@ export interface SidebarProps {
   updateMagnitudeMin: (magnitudeMin: number) => void;
   updateFftsize: (fftSize: number) => void;
   updateWindowChange: (fftWindow: string) => void;
-  handleAutoScale: (autoscale: boolean) => void;
-  autoscale: boolean;
   magnitudeMax: number;
   magnitudeMin: number;
   toggleCursors: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -30,6 +28,8 @@ export interface SidebarProps {
   setPythonSnippet: (pythonSnippet: string) => void;
   meta: SigMFMetadata;
   setMeta: (meta: SigMFMetadata) => void;
+  colorMap: any;
+  setColorMap: any;
 }
 
 const Sidebar = (props) => {
@@ -46,8 +46,6 @@ const Sidebar = (props) => {
             updateMagnitudeMin={props.updateMagnitudeMin}
             updateFftsize={props.updateFftsize}
             updateWindowChange={props.updateWindowChange}
-            handleAutoScale={props.handleAutoScale}
-            autoScale={props.autoscale}
             magnitudeMax={props.magnitudeMax}
             magnitudeMin={props.magnitudeMin}
             toggleCursors={props.toggleCursors}
@@ -60,6 +58,8 @@ const Sidebar = (props) => {
             pythonSnippet={props.pythonSnippet}
             setPythonSnippet={props.setPythonSnippet}
             handleProcessTime={props.handleProcessTime}
+            colorMap={props.colorMap}
+            setColorMap={props.setColorMap}
           />
         </div>
       </details>
