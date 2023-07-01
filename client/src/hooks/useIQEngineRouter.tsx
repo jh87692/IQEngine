@@ -9,6 +9,7 @@ import React from 'react';
 import RepoBrowser from '@/pages/repo-browser/RepoBrowser';
 import RecordingsBrowser from '@/pages/recordings-browser/RecordingsBrowser';
 import SpectrogramPage from '@/pages/spectrogram/SpectrogramPage';
+import MetadataQuery from '@/pages/metadata-query/MetadataQuery';
 import SwaggerUI from 'swagger-ui-react';
 
 export function useIQEngineRouter() {
@@ -22,6 +23,7 @@ export function useIQEngineRouter() {
         { path: 'siggen', element: <SignalGenerator /> },
         { path: 'plugins', element: <Plugins /> },
         { path: 'validator', element: <Validator /> },
+        { path: 'query', element: <MetadataQuery />},
         { index: true, element: <RepoBrowser /> },
         { path: 'recordings/:type/:account/:container/:sasToken?', element: <RecordingsBrowser /> },
         { path: 'spectrogram/:type/:account/:container/:filePath/:sasToken?', element: <SpectrogramPage /> },
