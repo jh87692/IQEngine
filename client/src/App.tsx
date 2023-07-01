@@ -112,6 +112,11 @@ export const App = () => {
                 </Link>
               </li>
               <li className="hidden md:block">
+                <Link to="/metadataquery" onClick={() => {}}>
+                  <div className="text-lg">Query</div>
+                </Link>
+              </li>
+              <li className="hidden md:block">
                 <Link to="/sigmf" onClick={() => {}}>
                   <div className="text-lg">SigMF</div>
                 </Link>
