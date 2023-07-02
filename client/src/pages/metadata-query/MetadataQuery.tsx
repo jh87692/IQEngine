@@ -1,5 +1,6 @@
 //react functional component
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { queries} from './queries';
 
 // account: Optional[List[str]] = Query([]),
@@ -14,10 +15,23 @@ import { queries} from './queries';
 //     max_datetime: Optional[datetime] = Query(None),
 //     text: Optional[str] = Query(None),
 //     metadataSet: Collection[Metadata] = Depends(database.database.metadata_collection),
-
+const fetchData = async () => {
+  const response = await fetch('http://127.0.0.1:5000/api/datasources/query?min_frequency=8486000000',
+    { 
+      method: 'GET', 
+      headers: { 'Content-Type': 'application/json' },
+    });
+  return response.json();
+}
 
 const MetadataQuery = () => {
   const [selections, setSelections] = useState(queries);
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState({});
+
+  const {isLoading, fetchStatus, status, data, error, refetch} = useQuery(['metadata-query'], fetchData, {
+    enabled: false,
+  });
 
   const toggleSelected = (e) => {
     const name = e.target.name;
@@ -69,12 +83,30 @@ const MetadataQuery = () => {
   }
 
   const showQueryButton = () => {
+    let empty = true;
     for (let item of Object.keys(selections)) {
+      if(selections[item].selected) {
+        empty = false;
+      }
       if (selections[item].selected && selections[item].queryString === ""){
         return false;
       }
     };
+    if (empty)
+      return false;
     return true;
+  }
+
+  const renderResults = () => {
+    if(!data)
+      return null;
+    console.log('we have some data!');
+    console.log(data);
+    return data.map((item) => <p>blah</p>);
+  }
+
+  const handleQuery = () => {
+    refetch();
   }
 
   return (
@@ -88,8 +120,14 @@ const MetadataQuery = () => {
         </div>
         <div className="col-span-9 ml-10 ">
           {renderQueryComponents()}
-          <button disabled={!showQueryButton()} className="btn btn-secondary w-full">QUERY</button>
+          <button onClick={handleQuery} disabled={!showQueryButton()} className="btn btn-secondary w-full">QUERY</button>
+          {isLoading && fetchStatus === "fetching" &&
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+            </div>
+          }
         </div>
+        {renderResults()}
       </div>
     </div>
     
