@@ -48,12 +48,12 @@ export const FreqQuery = ({
             From: 
             <span className="ml-2 badge badge-md badge-success">{freqRange.from} MHz</span>
           </h3>
-          <input name="from" onChange={handleFreqChange} type="range" step={100} min={0} max="1000000" value={freqRange.from} className="range range-secondary w-full" />
+          <input name="from" onChange={handleFreqChange} type="range" step={100} min={0} max="10000000000" value={freqRange.from} className="range range-secondary w-full" />
           <h3 className="text-lg">
             To: 
             <span className="ml-2 badge badge-md badge-success">{freqRange.to} MHz</span>
           </h3>
-          <input name="to" onChange={handleFreqChange} type="range" min={0} step={100} max="1000000" value={freqRange.to} className="range range-secondary w-full" />
+          <input name="to" onChange={handleFreqChange} type="range" min={0} step={100} max="10000000000" value={freqRange.to} className="range range-secondary w-full" />
         </div>
       </div>}
     </div>

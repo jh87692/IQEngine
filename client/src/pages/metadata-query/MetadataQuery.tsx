@@ -1,43 +1,35 @@
 //react functional component
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+
+import { SigMFMetadata } from '@/utils/sigmfMetadata';
+import Results from './Results';
 import { queries} from './queries';
 
-// account: Optional[List[str]] = Query([]),
-//     container: Optional[List[str]] = Query([]),
-//     min_frequency: Optional[float] = Query(None),
-//     max_frequency: Optional[float] = Query(None),
-//     author: Optional[str] = Query(None),
-//     label: Optional[str] = Query(None),
-//     comment: Optional[str] = Query(None),
-//     description: Optional[str] = Query(None),
-//     min_datetime: Optional[datetime] = Query(None),
-//     max_datetime: Optional[datetime] = Query(None),
-//     text: Optional[str] = Query(None),
-//     metadataSet: Collection[Metadata] = Depends(database.database.metadata_collection),
-const fetchData = async () => {
-  const response = await fetch('http://127.0.0.1:5000/api/datasources/query?min_frequency=8486000000',
-    { 
-      method: 'GET', 
-      headers: { 'Content-Type': 'application/json' },
-    });
-  return response.json();
-}
+
 
 const MetadataQuery = () => {
   const [selections, setSelections] = useState(queries);
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState({});
+  const [data, setData] = useState<SigMFMetadata[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const fetchData = async (queryString) => {
+    const response = await fetch(`http://127.0.0.1:5000/api/datasources/query?${queryString}`,
+      { 
+        method: 'GET', 
+        headers: { 'Content-Type': 'application/json' },
+      });
+    return await response.json();
+  }
 
-  const {isLoading, fetchStatus, status, data, error, refetch} = useQuery(['metadata-query'], fetchData, {
-    enabled: false,
-  });
+  // const {isLoading, fetchStatus, status, data, error, refetch} = useQuery(['metadata-query', queryString], fetchData, {
+  //   enabled: false,
+  // });
 
   const toggleSelected = (e) => {
     const name = e.target.name;
     const newSelections = {...selections};
     newSelections[name].selected = !newSelections[name].selected;
-    newSelections[name].queryString = "";
+    newSelections[name].value = "";
     setSelections(newSelections);
   }
 
@@ -72,13 +64,13 @@ const MetadataQuery = () => {
 
   const handleQueryValid = (name: string, value: string) => {
     const newSelections = {...selections};
-    newSelections[name].queryString = value;
+    newSelections[name].value = value;
     setSelections(newSelections);
   }
 
   const handleQueryInvalid = (name: string) => {
     const newSelections = {...selections};
-    newSelections[name].queryString = "";
+    newSelections[name].value = "";
     setSelections(newSelections);
   }
 
@@ -88,7 +80,7 @@ const MetadataQuery = () => {
       if(selections[item].selected) {
         empty = false;
       }
-      if (selections[item].selected && selections[item].queryString === ""){
+      if (selections[item].selected && selections[item].value === ""){
         return false;
       }
     };
@@ -100,13 +92,22 @@ const MetadataQuery = () => {
   const renderResults = () => {
     if(!data)
       return null;
-    console.log('we have some data!');
-    console.log(data);
-    return data.map((item) => <p>blah</p>);
+    return <Results data={data} />
   }
 
-  const handleQuery = () => {
-    refetch();
+  const handleQuery = async () => {
+    let query = "";
+    for (let item of Object.keys(selections)) {
+      if(selections[item].value) {
+        query += `${selections[item].value}&`
+      }
+    }
+    if(!query)
+      return;
+    setIsLoading(true);
+    const response = await fetchData(query);
+    setData(response);
+    setIsLoading(false);
   }
 
   return (
@@ -121,9 +122,11 @@ const MetadataQuery = () => {
         <div className="col-span-9 ml-10 ">
           {renderQueryComponents()}
           <button onClick={handleQuery} disabled={!showQueryButton()} className="btn btn-secondary w-full">QUERY</button>
-          {isLoading && fetchStatus === "fetching" &&
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
-              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+          {isLoading &&
+            <div className="flex justify-center	mt-10">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+              </div>
             </div>
           }
         </div>

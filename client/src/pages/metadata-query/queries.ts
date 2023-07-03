@@ -2,6 +2,7 @@ import moment from 'moment';
 import { DateQuery } from "./DateQuery";
 import { StringQuery } from "./StringQuery";
 import { FreqQuery } from "./FreqQuery";
+import { GeoQuery } from './GeoQuery';
 
 export const queries = {
   date: {
@@ -12,11 +13,20 @@ export const queries = {
       let parsedTo = moment(to);
       let parsedFrom = moment(from);
       if ((parsedTo.isValid() && parsedFrom.isValid()) && parsedTo.isAfter(parsedFrom)) {
-        return "this will be the date"
+        return `min_datetime=${encodeURIComponent(parsedFrom.format())}&max_datetime=${encodeURIComponent(parsedTo.format())}`
       }
       return false;
     },
-    queryString: ""
+    value: ""  
+  },
+  geo: {
+    component: GeoQuery,
+    selected: false,
+    description: "lat and long with radius for geo search",
+    validator: ({lat, lon, radius}) => {
+      return `geolat=${lat}&geolong=${lon}&georadius=${radius}`;
+    },
+    value: ""  
   },
   author: {
     component: StringQuery,
@@ -26,9 +36,9 @@ export const queries = {
       if (!author) {
         return false;
       }
-      return author;
+      return `author=${encodeURIComponent(author)}`;
     },
-    queryString: ""
+    value: ""
   },
   comment: {
     component: StringQuery,
@@ -38,9 +48,9 @@ export const queries = {
       if (!comment) {
         false;
       }
-      return comment;
+      return `comment=${encodeURIComponent(comment)}`;
     },
-    queryString: ""
+    value: ""
   },
   frequency: {
     component: FreqQuery,
@@ -50,11 +60,11 @@ export const queries = {
       const parsedFrom: number = parseInt(from);
       const parsedTo: number = parseInt(to);
       if (parsedFrom && parsedTo  && parsedFrom < parsedTo) {
-        return "this will be the frequency";
+        return `min_frequency=${parsedFrom}&max_frequency=${parsedTo}`;
       }
       return false;
     },
-    queryString: ""
+    value: ""
   },
   container: {
     component: StringQuery,
@@ -64,9 +74,9 @@ export const queries = {
       if (!container) {
         return false;
       }
-      return container;
+      return `container=${encodeURIComponent(container)}`;
     },
-    queryString: ""
+    value: ""
   },
   label: {
     component: StringQuery,
@@ -76,9 +86,9 @@ export const queries = {
       if (!label) {
         return false;
       }
-      return label;
+      return `label=${encodeURIComponent(label)}`;
     },
-    queryString: ""
+    value: ""
   },
   text: {
     component: StringQuery,
@@ -88,8 +98,8 @@ export const queries = {
       if (!text) {
         return false;
       }
-      return text;
+      return `text=${encodeURIComponent(text)}`;
     },
-    queryString: ""
+    value: ""
   }
 }

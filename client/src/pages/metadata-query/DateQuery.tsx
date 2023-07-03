@@ -22,7 +22,6 @@ export const DateQuery = ({
     newDateRange[name] = value;
     setDateRange(newDateRange);
     let valid = name === 'from' ? validator({from: value, to: dateRange.to}) : validator({from: dateRange.from, to: value});
-    console.log('is date valid: ', valid);
     if (valid){
       return handleQueryValid(queryName, valid);
     }
