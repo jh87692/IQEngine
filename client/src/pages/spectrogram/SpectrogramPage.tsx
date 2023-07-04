@@ -19,7 +19,7 @@ import { GlobalProperties } from '@/pages/spectrogram/components/global-properti
 import { MetaViewer } from '@/pages/spectrogram/components/Metadata/MetaViewer';
 import { MetaRaw } from '@/pages/spectrogram/components/Metadata/MetaRaw';
 import { useParams } from 'react-router-dom';
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getMeta } from '@/api/metadata/Queries';
 import { SigMFMetadata } from '@/utils/sigmfMetadata';
 import { getIQDataSlices, useCurrentCachedIQDataSlice } from '@/api/iqdata/Queries';
@@ -72,7 +72,7 @@ export const SpectrogramPage = () => {
   const [missingTiles, setMissingTiles] = useState([]);
   const metaQuery = getMeta(type, account, container, filePath);
   const tiles = range(Math.floor(lowerTile), Math.ceil(upperTile));
-  const [fftData, setFFTData] = useState<Record<number, Uint8ClampedArray>>({});
+  const [fftData, setFFTData] = useState<Record<number, Float32Array>>({});
   const [meta, setMeta] = useState<SigMFMetadata>(metaQuery.data);
   const [taps, setTaps] = useState<number[]>([1]);
   const [pythonSnippet, setPythonSnippet] = useState(INITIAL_PYTHON_SNIPPET);
@@ -84,15 +84,11 @@ export const SpectrogramPage = () => {
   const iqQuery = getIQDataSlices(metaQuery.data, tiles, TILE_SIZE_IN_IQ_SAMPLES, !!metaQuery.data && tiles.length > 0);
 
   useEffect(() => {
-    window.addEventListener('resize', windowResized);
     if (!pyodide) {
       initPyodide().then((pyodide) => {
         setPyodide(pyodide);
       });
     }
-    return () => {
-      window.removeEventListener('resize', windowResized);
-    };
   }, []);
 
   useEffect(() => {
@@ -219,7 +215,7 @@ export const SpectrogramPage = () => {
     setHandleTop(handleTop);
   };
 
-  const windowResized = () => {
+  function windowResized() {
     if (!meta) {
       return;
     }
@@ -250,10 +246,13 @@ export const SpectrogramPage = () => {
     }
   }, [meta, zoomLevel, handleTop, spectrogramWidth, spectrogramHeight]);
 
-  // run windowResized once when page loads
   useEffect(() => {
+    window.addEventListener('resize', windowResized);
     windowResized();
-  }, []);
+    return () => {
+      window.removeEventListener('resize', windowResized);
+    }
+  }, [meta]);
 
   const toggleIncludeRfFreq = () => {
     setIncludeRfFreq(!includeRfFreq);
