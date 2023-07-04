@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useCallback } from 'react';
 import "leaflet/dist/leaflet.css"; 
-import { MapContainer, TileLayer, Marker, Popup, Circle, LayerGroup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Circle, LayerGroup } from 'react-leaflet';
 import { Icon } from 'leaflet';
 
 
@@ -79,7 +79,8 @@ export const GeoQuery = ({ data, queryName, description, validator, handleQueryV
         </div> 
       </div>
       {show && <div>
-        <input onChange={handleRadiusChange} type="range" min={minRadius} max={maxRadius} value={radius} step={100} className="mb-5 range range-success" />
+        <input onChange={handleRadiusChange} type="range" min={minRadius} max={maxRadius} value={radius} step={100} className="range range-success" />
+        <div className="badge badge-lg mb-5">Radius: {radius}m</div>
         <MapContainer center={position} zoom={8} scrollWheelZoom={true}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

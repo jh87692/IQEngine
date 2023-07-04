@@ -55,7 +55,7 @@ export const queries = {
   frequency: {
     component: FreqQuery,
     selected: true,
-    description: "The frequency range to search over (MHz)",
+    description: "The frequency range to search over (Hz)",
     validator: ({from, to}) => {
       const parsedFrom: number = parseInt(from);
       const parsedTo: number = parseInt(to);
@@ -64,7 +64,7 @@ export const queries = {
       }
       return false;
     },
-    value: `min_frequency=30000000&max_frequency=300000000}`
+    value: `min_frequency=30000000&max_frequency=300000000`
   },
   container: {
     component: StringQuery,
