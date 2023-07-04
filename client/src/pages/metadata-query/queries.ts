@@ -24,7 +24,7 @@ export const queries = {
     selected: false,
     description: "lat and long with radius for geo search",
     validator: ({lat, lon, radius}) => {
-      return `geolat=${lat}&geolong=${lon}&georadius=${radius}`;
+      return `geo_lat=${lat}&geo_long=${lon}&geo_radius=${radius}`;
     },
     value: ""  
   },
@@ -46,7 +46,7 @@ export const queries = {
     description: "Comments contained in the annotation",
     validator: (comment: string) => {
       if (!comment) {
-        false;
+        return false;
       }
       return `comment=${encodeURIComponent(comment)}`;
     },
@@ -54,17 +54,17 @@ export const queries = {
   },
   frequency: {
     component: FreqQuery,
-    selected: false,
+    selected: true,
     description: "The frequency range to search over (MHz)",
     validator: ({from, to}) => {
       const parsedFrom: number = parseInt(from);
       const parsedTo: number = parseInt(to);
-      if (parsedFrom && parsedTo  && parsedFrom < parsedTo) {
+      if (parsedTo > 0 && (parsedFrom < parsedTo)) {
         return `min_frequency=${parsedFrom}&max_frequency=${parsedTo}`;
       }
       return false;
     },
-    value: ""
+    value: `min_frequency=30000000&max_frequency=300000000}`
   },
   container: {
     component: StringQuery,

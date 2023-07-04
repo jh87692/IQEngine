@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 
+import BandSelection from './BandSelection';
+
 export const FreqQuery = ({
   description,
   validator,
@@ -9,11 +11,20 @@ export const FreqQuery = ({
   handleQueryValid,
   handleQueryInvalid,
 }) => {
+  const bands = {
+    VLF: ['VLF', 3000, 30000],
+    LF: ['LF', 30000, 3000000],
+    MF: ['MF', 300000, 3000000], 
+    HF: ['HF', 3000000, 30000000],
+    VHF: ['VHF', 30000000, 300000000],
+    UHF: ['UHF', 300000000, 3000000000]
+  }
   const [show, setShow] = useState(true);
   const [freqRange, setFreqRange] = useState({
-    from: 0,
-    to: 0
+    from: bands.VHF[1],
+    to: bands.VHF[2]
   });
+  const [band, setBand] = useState(bands.VHF);
 
   const handleFreqChange = (e) => {
     const name = e.target.name;
@@ -30,9 +41,20 @@ export const FreqQuery = ({
 
   const renderDividerButtonClass = () => {
     if (validator({from: freqRange.from, to: freqRange.to})) {
-      return "btn btn-success";
+      return "btn btn-success w-80";
     }
-    return "btn";
+    return "btn w-80";
+  }
+
+  const handleSelection = (to) => {
+    console.log(to);
+    setBand(to);
+    setFreqRange({
+      from: to[1],
+      to: to[2]
+    });
+    const valid = validator({from: to[1], to: to[2]});
+    return handleQueryValid(queryName, valid);
   }
 
   return (
@@ -44,16 +66,21 @@ export const FreqQuery = ({
       </div> 
       {show && <div className="card bg-neutral text-neutral-content">
         <div className="card-body">
+          <BandSelection 
+            selected={band[0]}
+            handleSelection={handleSelection}
+            bands={bands}
+          />
           <h3 className="text-lg">
             From: 
-            <span className="ml-2 badge badge-md badge-success">{freqRange.from} MHz</span>
+            <span className="ml-2 badge badge-md badge-success">{`${freqRange.from} Hz`}</span>
           </h3>
-          <input name="from" onChange={handleFreqChange} type="range" step={100} min={0} max="10000000000" value={freqRange.from} className="range range-secondary w-full" />
+          <input name="from" onChange={handleFreqChange} type="range" step={100} min={0} max={3000000000} value={freqRange.from}  className="range range-secondary w-full" />
           <h3 className="text-lg">
             To: 
-            <span className="ml-2 badge badge-md badge-success">{freqRange.to} MHz</span>
+            <span className="ml-2 badge badge-md badge-success">{`${freqRange.to} Hz`}</span>
           </h3>
-          <input name="to" onChange={handleFreqChange} type="range" min={0} step={100} max="10000000000" value={freqRange.to} className="range range-secondary w-full" />
+          <input name="to" onChange={handleFreqChange} type="range" min={0} step={100} max={3000000000} value={freqRange.to} className="range range-secondary w-full" />
         </div>
       </div>}
     </div>

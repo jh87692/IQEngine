@@ -1,29 +1,12 @@
-//react functional component
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 
-import { SigMFMetadata } from '@/utils/sigmfMetadata';
 import Results from './Results';
 import { queries} from './queries';
 
 
-
 const MetadataQuery = () => {
   const [selections, setSelections] = useState(queries);
-  const [data, setData] = useState<SigMFMetadata[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const fetchData = async (queryString) => {
-    const response = await fetch(`http://127.0.0.1:5000/api/datasources/query?${queryString}`,
-      { 
-        method: 'GET', 
-        headers: { 'Content-Type': 'application/json' },
-      });
-    return await response.json();
-  }
-
-  // const {isLoading, fetchStatus, status, data, error, refetch} = useQuery(['metadata-query', queryString], fetchData, {
-  //   enabled: false,
-  // });
+  const [queryString, setQueryString] = useState("");
 
   const toggleSelected = (e) => {
     const name = e.target.name;
@@ -90,9 +73,7 @@ const MetadataQuery = () => {
   }
 
   const renderResults = () => {
-    if(!data)
-      return null;
-    return <Results data={data} />
+    return <Results queryString={queryString} />
   }
 
   const handleQuery = async () => {
@@ -104,10 +85,7 @@ const MetadataQuery = () => {
     }
     if(!query)
       return;
-    setIsLoading(true);
-    const response = await fetchData(query);
-    setData(response);
-    setIsLoading(false);
+    setQueryString(query);
   }
 
   return (
@@ -122,16 +100,9 @@ const MetadataQuery = () => {
         <div className="col-span-9 ml-10 ">
           {renderQueryComponents()}
           <button onClick={handleQuery} disabled={!showQueryButton()} className="btn btn-secondary w-full">QUERY</button>
-          {isLoading &&
-            <div className="flex justify-center	mt-10">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
-                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-              </div>
-            </div>
-          }
         </div>
-        {renderResults()}
       </div>
+      {renderResults()}
     </div>
     
   );

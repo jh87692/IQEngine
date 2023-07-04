@@ -29,7 +29,7 @@ export const StringQuery = ({
           <button
             onClick={() => setShow(!show)} 
             disabled={!validator(string)}
-            className={string ? "btn btn-success" : "btn"}
+            className={string ? "btn btn-success w-80" : "btn w-80"}
           >
             {queryName}
           </button>

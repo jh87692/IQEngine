@@ -4,7 +4,6 @@ from logging.config import dictConfig
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from handlers.config import router as config_router
 from handlers.datasources import router as datasources_router
@@ -78,10 +77,6 @@ class LogConfig(BaseModel):
 dictConfig(LogConfig().dict())
 logger = logging.getLogger("api")
 
-origins = [
-    "http://localhost:3000",
-]
-
 app = FastAPI()
 app.include_router(iq_router)
 app.include_router(datasources_router)
@@ -89,14 +84,6 @@ app.include_router(metadata_router)
 app.include_router(status_router)
 app.include_router(config_router)
 app.include_router(plugins_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 app.mount("/", SPAStaticFiles(directory="iqengine", html=True), name="iqengine")
 

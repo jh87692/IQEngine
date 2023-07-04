@@ -31,9 +31,9 @@ export const DateQuery = ({
   const renderDividerButtonClass = () => {
     const valid: string = validator({from: dateRange.from, to: dateRange.to});
     if (valid){
-      return "btn btn-success";
+      return "btn btn-success w-80";
     }
-    return "btn";
+    return "btn w-80";
   }
 
   return (

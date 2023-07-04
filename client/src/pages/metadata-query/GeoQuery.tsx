@@ -5,7 +5,7 @@ import { Icon } from 'leaflet';
 
 
 
-function DraggableMarker({updatePosition, defaultPosition}) {
+function DraggableMarker({updatePosition, defaultPosition, radius}) {
   const customIcon = new Icon({
     iconUrl: 'pin.png',
     iconSize: [25, 25],
@@ -23,7 +23,7 @@ function DraggableMarker({updatePosition, defaultPosition}) {
         }
       },
     }),
-    [],
+    [radius],
   )
   const toggleDraggable = useCallback(() => {
     setDraggable((d) => !d)
@@ -31,18 +31,11 @@ function DraggableMarker({updatePosition, defaultPosition}) {
 
   return (
     <Marker
-      draggable={draggable}
+      draggable={true}
       eventHandlers={eventHandlers}
       position={position}
       icon={customIcon}
       ref={markerRef}>
-      <Popup minWidth={90}>
-        <span onClick={toggleDraggable}>
-          {draggable
-            ? 'Marker is draggable'
-            : 'Click here to make marker draggable'}
-        </span>
-      </Popup>
     </Marker>
   )
 }
@@ -52,13 +45,12 @@ export const GeoQuery = ({ data, queryName, description, validator, handleQueryV
     lat: 51.505,
     lng: -0.09,
   }
-  const defaultRadius = 20000;
   const fillBlueOptions = { fillColor: 'blue' }
   const minRadius = 100;
-  const maxRadius = 100000;
-
+  const maxRadius = 1000000;
+  
   const [position, setPosition] = useState(defaultCenter);
-  const [radius, setRadius] = useState(defaultRadius);
+  const [radius, setRadius] = useState(20000);
   const [show, setShow] = useState(true);
 
   const handleRadiusChange = (e) => {
@@ -68,9 +60,14 @@ export const GeoQuery = ({ data, queryName, description, validator, handleQueryV
     handleQueryValid(queryName, valid);
   }
 
+  const getRadius = () => {
+    return radius;
+  }
+
   const handlePositionChange = (updatedPosition) => {
+    const valid = validator({lat: updatedPosition.lat, lon: updatedPosition.lng, radius: getRadius()});
     setPosition(updatedPosition);
-    const valid = validator({lat: updatedPosition.lat, lon: updatedPosition.lng, radius: radius});
+    
     handleQueryValid(queryName, valid);
   }
 
@@ -78,12 +75,12 @@ export const GeoQuery = ({ data, queryName, description, validator, handleQueryV
     <div className="mb-10">
       <div className="divider mb-8">
         <div className="tooltip" data-tip={description}>
-          <button onClick={() => setShow(!show)} className="btn btn-success">{queryName}</button>
+          <button onClick={() => setShow(!show)} className="btn btn-success w-80">{queryName}</button>
         </div> 
       </div>
       {show && <div>
         <input onChange={handleRadiusChange} type="range" min={minRadius} max={maxRadius} value={radius} step={100} className="mb-5 range range-success" />
-        <MapContainer center={defaultCenter} zoom={8} scrollWheelZoom={false}>
+        <MapContainer center={position} zoom={8} scrollWheelZoom={true}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -91,7 +88,8 @@ export const GeoQuery = ({ data, queryName, description, validator, handleQueryV
           <LayerGroup>
             <Circle center={position} pathOptions={fillBlueOptions} radius={radius} />
           </LayerGroup>
-          <DraggableMarker 
+          <DraggableMarker
+            radius={radius}
             updatePosition={handlePositionChange}
             defaultPosition={position}
           />
