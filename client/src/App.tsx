@@ -174,7 +174,11 @@ export const App = () => {
                   <div className="text-lg">Plugins</div>
                 </Link>
               </li>
-
+              <li className="hidden md:block">
+                <Link to="/query" onClick={() => {}}>
+                  <div className="text-lg">Query</div>
+                </Link>
+              </li>
               {activeAccount ? (
                 <>
                   <li className="hidden md:block">
